@@ -20,9 +20,9 @@ class UserSchema(SQLAlchemyAutoSchema):
         if value < 0:
             raise ValidationError('Deposit must be non-negative.')
 
-    @post_dump
-    def process_relationships(self, data, **kwargs):
-        # Load the 'products' relationship before serialization
-        if 'products' in data:
-            data['products'] = product_schema.dump(data['products'], many=True)
-        return data
+#    @post_dump
+#    def process_relationships(self, data, **kwargs):
+#        # Load the 'products' relationship before serialization
+#        if 'products' in data:
+#            data['products'] = product_schema.dump(data['products'], many=True)
+#        return data

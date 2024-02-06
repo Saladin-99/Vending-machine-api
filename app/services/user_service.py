@@ -49,3 +49,22 @@ class UserService:
         user.deposit += amount
         db.session.commit()
         return user.deposit
+    
+    @staticmethod
+    def bankrupt(user_id):
+        user = User.query.get(user_id)
+
+        # Deposit coins into the vending machine account
+        user.deposit=0
+        db.session.commit()
+
+    @staticmethod
+    def get_wallet(user_id):
+        user = User.query.get(user_id)
+        return user.deposit
+    
+    @staticmethod
+    def buy(user_id, cost):
+        user = User.query.get(user_id)
+        user.deposit -= cost
+        db.session.commit()

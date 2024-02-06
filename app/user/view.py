@@ -13,7 +13,6 @@ users_schema = UserSchema(many=True)
 
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):
-    print("Received JWT data:", jwt_data)
     identity = jwt_data["sub"]
     return UserService.get_user_by_id(identity)
 
@@ -51,7 +50,7 @@ def handle_login():
         access_token = create_access_token(identity=match)
         return jsonify(access_token=access_token),201
     else:
-        return jsonify("Wrong username or password"), 401
+        return jsonify({"error":"Wrong username or password"}), 401
 
 
 # Read Users
@@ -60,7 +59,10 @@ def handle_login():
 @jwt_required()
 def get_users():
     all_users = UserService.get_users()
-    return users_schema.dump(all_users),201
+    if all_users:
+        return users_schema.dump(all_users),201
+    else:
+        return jsonify({"empty":"No users to show."}), 403
 
 
 @user_bp.route('/', methods=['PUT'])
@@ -100,3 +102,11 @@ def deposit_coins():
     # Deposit coins into the vending machine account
     deposit_amount = UserService.deposit_coins(current_user.id, amount)
     return jsonify({"deposit": deposit_amount}), 200
+
+@user_bp.route('/reset', methods=['GET'])
+@jwt_required()
+def reset_wallet():
+    if current_user.role != 'buyer':
+        return jsonify({"error": "Unauthorized"}), 401
+    UserService.bankrupt(current_user.id)
+    return jsonify({"message": "reset successful"})
