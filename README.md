@@ -15,6 +15,8 @@ flask_cors
 
 flask_jwt_extended
 
+flask-marshmallow
+
 marshmallow_mysqlalchemy
 
 mysqlclient
